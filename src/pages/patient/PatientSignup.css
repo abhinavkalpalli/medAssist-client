@@ -1,0 +1,112 @@
+/* src/pages/signup/PatientSignup.css */
+
+/* Main container styling */
+.signup-container {
+    display: flex;
+    height: 100vh;
+}
+
+.signup-image {
+    flex: 1;
+    background-image: url('https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Form container styling */
+.signup-form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+}
+
+.signup-box {
+    width: 100%;
+    text-align: center;
+}
+
+.signup-title {
+    margin-bottom: 24px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+.signup-button {
+    margin-top: 24px;
+    padding: 10px 0;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+.signup-button:hover {
+    background-color: #0056b3;
+}
+
+.signup-link-container {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.signup-link-container > * {
+    margin: 0 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+.signup-link-container > *:hover {
+    color: #0056b3;
+}
+
+/* Gender radio group styling */
+.gender-radio-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 0;
+    text-align: left;
+}
+
+.gender-title {
+    font-size: 14px;
+    color: #333;
+    margin-right: 16px;
+}
+
+.gender-options {
+    display: flex;
+    gap: 16px;
+}
+
+.gender-radio {
+    display: flex;
+    align-items: center;
+}
+
+.gender-radio input {
+    margin-right: 4px;
+}
+
+.gender-radio label {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Responsive adjustments */

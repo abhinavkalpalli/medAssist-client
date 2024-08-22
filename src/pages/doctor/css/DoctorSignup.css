@@ -1,0 +1,93 @@
+/* Ensure the image and form container take up correct space */
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+}
+
+.signup-image {
+  background-image: url('https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+  background-size: cover;
+  background-position: center;
+  width: 50%; /* Take up half the width */
+  height: 100%; /* Full height */
+}
+
+.signup-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center form vertically */
+  width: 50%; /* Take up half the width */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.signup-box {
+  width: 100%; /* Full width of the form container */
+}
+
+.signup-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.signup-button {
+  margin: 20px 0;
+  width: 100%;
+}
+
+
+.working-days-checkbox-group {
+  margin: 16px 0;
+}
+
+.gender-title,
+.working-days-title {
+  margin-bottom: 8px;
+}
+
+
+.working-days-options {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+.working-days-checkbox {
+  margin-right: 16px;
+}
+
+.gender-radio-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.gender-title {
+  font-size: 14px;
+  color: #333;
+  margin-right: 16px;
+}
+
+.gender-options {
+  display: flex;
+  gap: 16px;
+}
+
+.gender-radio {
+  display: flex;
+  align-items: center;
+}
+
+.gender-radio input {
+  margin-right: 4px;
+}
+
+.gender-radio label {
+  font-size: 14px;
+  color: #333;
+}
