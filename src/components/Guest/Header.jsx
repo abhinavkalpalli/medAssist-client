@@ -1,5 +1,6 @@
 import { Disclosure } from "@headlessui/react";
-import profileHolder from '../../assets/Med Assist.png'
+import profileHolder from "../../assets/Med Assist.png";
+import { Link } from "react-router-dom";
 
 function Header() {
   return (
@@ -22,6 +23,32 @@ function Header() {
               </div>
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"></div>
+            <Link to={"/login"}>
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "10px 20px",
+                  color: "white",
+                  border: "2px solid white",
+                  borderRadius: "50px",
+                  textAlign: "center",
+                  textDecoration: "none",
+                  transition: "background-color 0.3s ease, transform 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "white";
+                  e.target.style.color = "black";
+                  e.target.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "transparent";
+                  e.target.style.color = "white";
+                  e.target.style.transform = "scale(1)";
+                }}
+              >
+                Login/Signup
+              </span>
+            </Link>
           </div>
         </div>
       </>

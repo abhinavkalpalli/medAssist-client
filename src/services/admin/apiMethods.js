@@ -19,6 +19,8 @@ export const adminLogin=(userData)=>{
         try{
             apiCall("post",userUrl.adminLogin,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -30,6 +32,8 @@ export const fetchPatients=()=>{
         try{
             apiCall("get",adminUrl.fetch_patients).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -41,6 +45,8 @@ export const fetchDoctors=()=>{
         try{
             apiCall("get",adminUrl.fetch_doctors).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -82,6 +88,8 @@ export const adminotpverify=(userData)=>{
         try{
             apiCall("post",adminUrl.adminotpverify,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -93,6 +101,8 @@ export const adminforgotpassword=(userData)=>{
         try{
             apiCall("post",adminUrl.adminforgotpassword,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -104,6 +114,8 @@ export const adminresetpassword=(userData)=>{
         try{
             apiCall("post",adminUrl.adminresetpassword,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})

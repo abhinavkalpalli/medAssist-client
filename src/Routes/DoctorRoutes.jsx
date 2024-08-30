@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import Loader from '../components/Loader/Loader'
 import Doctorlayout from '../pages/doctor/Doctorlayout'
+import DoctorPrivateRoutes from './DoctorPrivateRoutes';
 const DoctorLogin=lazy(()=>import ('../pages/login/DoctorLogin'))
 const DoctorSignup=lazy(()=>import('../pages/doctor/DoctorSignup'))
 const Profile=lazy(()=>import('../components/Doctor/DoctorProfile'))
@@ -27,7 +28,8 @@ function Doctorroute() {
           <Route>
             <Route path='*' element={<Error404/>}/>
             <Route path="/login" element={<><Header/><DoctorLogin/><Footer/></>}/>
-            <Route path="/signup" element={<><DoctorSignup/></>}/>
+            <Route path="/signup" element={<><Header/><DoctorSignup/><Footer/></>}/>
+            <Route element={<DoctorPrivateRoutes/>}>
             <Route path="/profile" element={<Doctorlayout><Profile/></Doctorlayout>} />
             <Route path="/passwordreset" element={<Doctorlayout><NewPass/></Doctorlayout>}/>
             <Route path="/appointments" element={<Doctorlayout><BookingList/></Doctorlayout>}/>
@@ -36,6 +38,7 @@ function Doctorroute() {
             <Route path="/walletHistory" element={<Doctorlayout><WalletHistory/></Doctorlayout>}/>
             <Route path="/dashboard" element={<Doctorlayout><Dashboard/></Doctorlayout>}/>
             <Route path="/chat" element={<Doctorlayout><Chat/></Doctorlayout>}/>
+            </Route>
           </Route>
         </Routes>
       </Suspense>

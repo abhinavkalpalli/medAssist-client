@@ -1,10 +1,8 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import './CSS/starRating.css';
+import React, { useState } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import "./CSS/starRating.css";
 import toast from "react-hot-toast";
-import { postRating } from '../../services/patient/apiMethods';
-
-
+import { postRating } from "../../services/patient/apiMethods";
 
 const StarRatingModal = ({ appointment, onClose }) => {
   const [rating, setRating] = useState(null);
@@ -21,16 +19,19 @@ const StarRatingModal = ({ appointment, onClose }) => {
           doctorId: appointment.doctorId,
           rating: rating,
         };
-        const response = await postRating(data)
-        if(response.status===200){
-            toast.success("Rating is submitted");
-            onClose();
+        const response = await postRating(data);
+        if (response.status === 200) {
+          toast.success("Rating is submitted");
+          onClose();
+        } else {
+          toast.error("Something went wrong");
         }
       } catch (error) {
-        console.error('Error submitting rating:', error);
+        console.error("Error submitting rating:", error);
+        toast.error("Something went wrong");
       }
     } else {
-      alert('Please select a rating.');
+      alert("Please select a rating.");
     }
   };
 
@@ -39,7 +40,14 @@ const StarRatingModal = ({ appointment, onClose }) => {
       <Typography variant="h6" component="h2" mb={2} align="center">
         Rate Your Experience
       </Typography>
-      <div className="rating" style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+      <div
+        className="rating"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "16px",
+        }}
+      >
         <input
           type="radio"
           id="star-5"
@@ -116,7 +124,11 @@ const StarRatingModal = ({ appointment, onClose }) => {
           </svg>
         </label>
       </div>
-      <Button variant="contained" onClick={handleSubmit} sx={{ display: 'block', mx: 'auto' }}>
+      <Button
+        variant="contained"
+        onClick={handleSubmit}
+        sx={{ display: "block", mx: "auto" }}
+      >
         Submit
       </Button>
     </Box>
@@ -124,19 +136,19 @@ const StarRatingModal = ({ appointment, onClose }) => {
 };
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
   borderRadius: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center', 
-  textAlign: 'center' 
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  textAlign: "center",
 };
 
 export default StarRatingModal;

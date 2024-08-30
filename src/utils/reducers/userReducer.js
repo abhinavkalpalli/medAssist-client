@@ -17,6 +17,7 @@ const userSlice=createSlice({
         },
         removeReduxUser: (state, action) => {
             state.userData = null;
+            state.validUser=false
             localStorage.removeItem(userAuth);
           },
           updateReduxUser: (state, action) => {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {fetchDoctors} from '../../../services/admin/apiMethods'
+import toast from "react-hot-toast";
 
 function Doctors({ Appointments }) {
   const [doctors, setDoctors] = useState([]);
@@ -10,6 +11,8 @@ function Doctors({ Appointments }) {
         const response = await fetchDoctors();
         if (response.status === 200) {
           setDoctors(response.data.data);
+        }else{
+          toast.error('Something Went Wrong')
         }
     };
     setBookings(Appointments);

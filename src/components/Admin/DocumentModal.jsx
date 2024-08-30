@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
+import React, { useState } from "react";
+import Modal from "react-modal";
 
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 function DocumentModal({ isOpen, onClose, documents, onVerify }) {
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -26,7 +26,7 @@ function DocumentModal({ isOpen, onClose, documents, onVerify }) {
         <h2 className="text-2xl mb-4">Uploaded Documents</h2>
         {previewUrl ? (
           <div className="border p-2 rounded bg-gray-100 mb-4">
-            {previewUrl.endsWith('.pdf') ? (
+            {previewUrl.endsWith(".pdf") ? (
               <iframe
                 src={previewUrl}
                 title="Document Preview"
@@ -51,7 +51,10 @@ function DocumentModal({ isOpen, onClose, documents, onVerify }) {
             <div className="space-y-4">
               {documents.length > 0 ? (
                 documents.map((doc, index) => (
-                  <div key={index} className="border p-2 rounded flex justify-between items-center">
+                  <div
+                    key={index}
+                    className="border p-2 rounded flex justify-between items-center"
+                  >
                     <span>{doc}</span>
                     <div>
                       <button

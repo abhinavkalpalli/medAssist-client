@@ -27,6 +27,8 @@ function Dashboard() {
           setPatients(uniquePatients);
           calculateTotalIncome(appointmentsData);
           calculateMonthlyIncome(appointmentsData);
+        }else{
+        toast.error('Something Went Wrong')
         }
       } catch (error) {
         console.error('Error fetching appointments:', error);
@@ -52,7 +54,8 @@ function Dashboard() {
           toast.success(`Gentle reminder that you have an appointment today at ${appointment.shift}`);
         });
       }
-      
+    }else{
+      toast.error('Something Went Wrong')
     }
   }
 

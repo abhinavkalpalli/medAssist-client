@@ -7,7 +7,8 @@ let doctorData,isValidUser,token
 const doctorSlice=createSlice({
     name:'doctor',
     initialState:{
-        doctorData:doctorData
+        doctorData:doctorData,
+        validUser:isValidUser
     },
     reducers:{
         setDoctors:(state,action)=>{
@@ -16,6 +17,7 @@ const doctorSlice=createSlice({
         },
         removeReduxDoctor: (state, action) => {
             state.doctorData = null;
+            state.validUser=false
             localStorage.removeItem(doctorAuth);
           },
           updateDoctor: (state, action) => {

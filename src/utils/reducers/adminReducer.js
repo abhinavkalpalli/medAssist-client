@@ -13,18 +13,22 @@ const adminSlice=createSlice({
     reducers:{
         setAdmin:(state,action)=>{
             state.adminData=action.payload.adminData
-            state.validUser = action.payload.validUser;
+            state.validUser = action.payload.adminData.is_Verified;
         },
         removeReduxAdmin: (state, action) => {
             state.adminData = null;
+            state.validUser=false
             localStorage.removeItem(adminAuth);
           },
           updateAdmin: (state, action) => {
-            state.adminData = action.payload.adminData;
+            state.adminData = {
+              ...state.adminData,
+              ...action.payload.adminData
+            };
           }
     }
 })
-export const adminAuthenticator = () => async (dispatch) => {
+export const userAuthenticator = () => async (dispatch) => {
     try {
       token = localStorage.getItem(adminAuth);
       if (token) {

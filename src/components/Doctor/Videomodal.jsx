@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { FiPhoneOff } from "react-icons/fi";
 
-const Appid = Number(process.env.REACT_APP_ZIGO_APPID)
-const ServerSecret =process.env.REACT_APP_ZIGO_SECRETKEY
+const Appid = Number(process.env.REACT_APP_ZIGO_APPID);
+const ServerSecret = process.env.REACT_APP_ZIGO_SECRETKEY;
 
 function randomID(len) {
   let result = "";
@@ -69,7 +69,7 @@ export default function Video() {
         scenario: {
           mode: ZegoUIKitPrebuilt.OneONoneCall,
         },
-        showPreJoinView:false
+        showPreJoinView: false,
       });
     };
 

@@ -18,6 +18,7 @@ import { doctorresetpassword } from "../../services/doctor/apiMethods";
 import { useSelector } from "react-redux";
 import "./PasswordReset.css";
 import { adminresetpassword } from "../../services/admin/apiMethods";
+import toast from "react-hot-toast";
 
 export default function PasswordReset() {
   const [password, setPassword] = useState("");
@@ -71,27 +72,31 @@ export default function PasswordReset() {
       }
 
       if (response.status === 200) {
-        if (response.status === 200) {
-          if (doctor && doctor.email) {
-            navigate("/doctor/profile");
-          } else if (patient && patient.email) {
-            navigate("/patient/profile");
-          } else if (admin && admin.email) {
-            navigate("/admin/home");
-          } else if (isAdmin) {
-            navigate("/admin/login");
-          } else if (isDoctor) {
-            navigate("/login/doctor");
-          } else {
-            navigate("/login");
-          }
+        if (doctor && doctor.email) {
+          toast.success('Password Changed successfully')
+          navigate("/doctor/profile");
+        } else if (patient && patient.email) {
+          toast.success('Password Changed successfully')
+          navigate("/patient/profile");
+        } else if (admin && admin.email) {
+          toast.success('Password Changed successfully')
+          navigate("/admin/home");
+        } else if (isAdmin) {
+          toast.success('Password Changed successfully')
+          navigate("/admin/login");
+        } else if (isDoctor) {
+          toast.success('Password Changed successfully')
+          navigate("/login/doctor");
+        } else {
+          toast.success('Password Changed successfully')
+          navigate("/login");
         }
       } else {
         setError(response.message);
       }
     } catch (error) {
       setError(
-        error?.response?.message ||
+        error?.message ||
           "Failed to reset password. Please try again."
       );
       setSuccess("");
@@ -138,8 +143,6 @@ export default function PasswordReset() {
                 autoFocus
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                error={!!error || poorPassword || weakPassword}
-                helperText={error || passwordStrength}
               />
             )}
             <TextField
@@ -156,8 +159,6 @@ export default function PasswordReset() {
                 setPassword(e.target.value);
                 handlePasswordChange(e);
               }}
-              error={!!error || poorPassword || weakPassword}
-              helperText={error || passwordStrength}
             />
             <TextField
               margin="normal"
@@ -172,9 +173,9 @@ export default function PasswordReset() {
               onChange={(e) => setPassword2(e.target.value)}
             />
             {error && (
-              <div className="text-red-600 text-sm font-extralight py-2">
+              <FormHelperText error className="text-red-600 text-sm font-extralight py-2">
                 ! {error}
-              </div>
+              </FormHelperText>
             )}
             <Button
               type="submit"

@@ -18,6 +18,9 @@ import { FaHeart } from "react-icons/fa";
 import { updateReduxUser } from "../../utils/reducers/userReducer";
 import { RiStarSFill, RiStarSLine } from "react-icons/ri";
 import { expertise } from "../../services/admin/apiMethods";
+import toast from "react-hot-toast";
+import Nodata from "../ui/Nodata";
+import profile from "../../assets/doc.png";
 
 Modal.setAppElement("#root");
 
@@ -54,6 +57,8 @@ function DoctorList() {
     const response = await expertise();
     if (response.status === 200) {
       setSpecializations(response.data.data);
+    } else {
+      toast.error("Something Went Wrong");
     }
   };
 
@@ -90,28 +95,38 @@ function DoctorList() {
       gender: genderFilter,
       expertise: selectedExpertise,
     };
-    const response = await findDoctors(data);
-    setDoctors(response.data.data.doctors);
-    setTotalPages(response.data.data.totalPages);
+    try {
+      const response = await findDoctors(data);
+      if (response.status === 200) {
+        setDoctors(response.data.data.doctors);
+        setTotalPages(response.data.data.totalPages);
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
   };
 
   const getDoctorBookings = async (doctorId) => {
-    const response = await bookings({ doctorId });
-    const formattedBookings = response.data.List.map((booking) => ({
-      ...booking,
-      date: new Date(booking.date),
-    }));
-    setDoctorBookings(formattedBookings);
-    setDoctorSlots(response.data.Slots);
-    const selectedDateISO = selectedDate.toISOString().split("T")[0];
-    const matchingSlots = response.data.Slots.filter((item) => {
-      const itemDateString = item.date.split("T")[0];
-      return itemDateString === selectedDateISO;
-    })
-      .map((item) => item.shifts)
-      .flat();
+    try {
+      const response = await bookings({ doctorId });
+      const formattedBookings = response.data.List.map((booking) => ({
+        ...booking,
+        date: new Date(booking.date),
+      }));
+      setDoctorBookings(formattedBookings);
+      setDoctorSlots(response.data.Slots);
+      const selectedDateISO = selectedDate.toISOString().split("T")[0];
+      const matchingSlots = response.data.Slots.filter((item) => {
+        const itemDateString = item.date.split("T")[0];
+        return itemDateString === selectedDateISO;
+      })
+        .map((item) => item.shifts)
+        .flat();
 
-    setShifts(matchingSlots);
+      setShifts(matchingSlots);
+    } catch (error) {
+      toast.error("Somthing Went Wrong");
+    }
   };
 
   const handlePageChange = (page) => {
@@ -144,39 +159,47 @@ function DoctorList() {
     );
   };
   const setFavourite = async (doctor) => {
-    const response = await setFavouriteDoctor({
-      id: User._id,
-      doctorId: doctor._id,
-      status: true,
-    });
-    if (response.status === 200) {
-      setFavourites(response.data.favourite_doctors);
-      dispatch(
-        updateReduxUser({
-          userData: {
-            ...User,
-            favourite_doctors: response.data.favourite_doctors,
-          },
-        })
-      );
+    try {
+      const response = await setFavouriteDoctor({
+        id: User._id,
+        doctorId: doctor._id,
+        status: true,
+      });
+      if (response.status === 200) {
+        setFavourites(response.data.favourite_doctors);
+        dispatch(
+          updateReduxUser({
+            userData: {
+              ...User,
+              favourite_doctors: response.data.favourite_doctors,
+            },
+          })
+        );
+      }
+    } catch (error) {
+      toast.error("Smething Went Wrong");
     }
   };
   const setUnFavourite = async (doctor) => {
-    const response = await setFavouriteDoctor({
-      id: User._id,
-      doctorId: doctor._id,
-      status: false,
-    });
-    if (response.status === 200) {
-      setFavourites(response.data.favourite_doctors);
-      dispatch(
-        updateReduxUser({
-          userData: {
-            ...User,
-            favourite_doctors: response.data.favourite_doctors,
-          },
-        })
-      );
+    try {
+      const response = await setFavouriteDoctor({
+        id: User._id,
+        doctorId: doctor._id,
+        status: false,
+      });
+      if (response.status === 200) {
+        setFavourites(response.data.favourite_doctors);
+        dispatch(
+          updateReduxUser({
+            userData: {
+              ...User,
+              favourite_doctors: response.data.favourite_doctors,
+            },
+          })
+        );
+      }
+    } catch (error) {
+      toast.error("Somthing Went Wrong");
     }
   };
   const filteredDoctors = doctors?.filter((doctor) => {
@@ -200,9 +223,9 @@ function DoctorList() {
   return (
     <div>
       {isFavoritePage && favourites.length == 0 ? (
-        <p className="text-lg font-semibold text-gray-500">
-          No favorite doctors found.
-        </p>
+        <>
+          <Nodata />
+        </>
       ) : (
         <div className="flex">
           <div className="w-1/4 p-6 bg-gray-100 h-screen sticky top-0">
@@ -283,7 +306,7 @@ function DoctorList() {
                     className="w-64 p-4 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                   >
                     <img
-                      src={doctor.photo || "/assets/doc.png"}
+                      src={doctor.photo || profile}
                       alt={doctor.name}
                       className="w-full h-40 object-cover rounded-t-lg"
                     />
@@ -397,7 +420,9 @@ function DoctorList() {
               <p className="text-gray-500">
                 EXPERIENCE : {selectedDoctor.experienceYears} years
               </p>
-              <p className="text-gray-500">EDUCATION : {selectedDoctor.education}</p>
+              <p className="text-gray-500">
+                EDUCATION : {selectedDoctor.education}
+              </p>
               <p className="text-gray-500">GENDER : {selectedDoctor.gender}</p>
               <p className="text-gray-500">FEE : {selectedDoctor.Fee}</p>
               <div className="mb-4">
@@ -473,7 +498,12 @@ function DoctorList() {
                 >
                   <button
                     onClick={handleModalClose}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    className={`px-4 py-2 rounded text-white ${
+                      selectedShift
+                        ? "bg-blue-500 hover:bg-blue-700"
+                        : "bg-gray-400 cursor-not-allowed"
+                    }`}
+                    disabled={!selectedShift}
                   >
                     Book
                   </button>

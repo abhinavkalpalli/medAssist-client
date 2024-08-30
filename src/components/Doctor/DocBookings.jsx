@@ -5,7 +5,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useSelector, useDispatch } from "react-redux";
 import { cancelAppointment } from "../../services/patient/apiMethods";
-import { drAppointments, fetchDoctor, patientHistory } from "../../services/doctor/apiMethods";
+import {
+  drAppointments,
+  fetchDoctor,
+  patientHistory,
+} from "../../services/doctor/apiMethods";
 import PrescriptionModal from "./PrescriptionModel";
 import { Link } from "react-router-dom";
 import { updateDoctor } from "../../utils/reducers/doctorReducer";
@@ -29,9 +33,9 @@ const DEFAULT_SHIFTS = {
   "8pm-9pm": 20,
 };
 
-const blueColor = '#2172d2';
-const cyanColor = '#32c6d2';
-const tealColor = '#17d5d1';
+const blueColor = "#2172d2";
+const cyanColor = "#32c6d2";
+const tealColor = "#17d5d1";
 
 function DocBookings() {
   const [appointments, setAppointments] = useState([]);
@@ -48,19 +52,27 @@ function DocBookings() {
   }, [selectedDate]);
 
   const fetchdoctor = async () => {
-    const response = await fetchDoctor({ doctorId: doctorData._id });
-    dispatch(updateDoctor({ doctorData: response.data.doctor }));
+    try {
+      const response = await fetchDoctor({ doctorId: doctorData._id });
+      dispatch(updateDoctor({ doctorData: response.data.doctor }));
+    } catch (error) {
+      toast.error("Somthing Went Wrong");
+    }
   };
 
   const fetchAppointments = async (date) => {
     const doctorId = doctorData._id;
     const dateto = date.toISOString().split("T")[0];
-    const response = await drAppointments(dateto, doctorId);
-    if (response.status === 200) {
-      setAppointments(response.data.appointments);
-    } else {
-      toast.error(response.data.message);
-      setAppointments([]);
+    try {
+      const response = await drAppointments(dateto, doctorId);
+      if (response.status === 200) {
+        setAppointments(response.data.appointments);
+      } else {
+        toast.error(response.data.message);
+        setAppointments([]);
+      }
+    } catch (error) {
+      toast.error("Somthing Went Wrong");
     }
   };
 
@@ -145,13 +157,27 @@ function DocBookings() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>Patient Name</TableCell>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>Email</TableCell>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>Booking Date</TableCell>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>Status</TableCell>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>Time</TableCell>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>Actions</TableCell>
-              <TableCell style={{ backgroundColor: blueColor, color: '#fff' }}>History of patient</TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                Patient Name
+              </TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                Email
+              </TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                Booking Date
+              </TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                Status
+              </TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                Time
+              </TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                Actions
+              </TableCell>
+              <TableCell style={{ backgroundColor: blueColor, color: "#fff" }}>
+                History of patient
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -160,13 +186,22 @@ function DocBookings() {
                 <TableRow key={appointment._id}>
                   <TableCell>{appointment.patientId.name}</TableCell>
                   <TableCell>{appointment.patientId.email}</TableCell>
-                  <TableCell>{new Date(appointment.date).toLocaleDateString()}</TableCell>
-                  <TableCell style={{
-                    backgroundColor: appointment.status === "Completed" ? tealColor :
-                      appointment.status === "Cancelled" ? '#f56565' :
-                        appointment.status === "Active" ? cyanColor : 'transparent',
-                    color: '#fff'
-                  }}>
+                  <TableCell>
+                    {new Date(appointment.date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell
+                    style={{
+                      backgroundColor:
+                        appointment.status === "Completed"
+                          ? tealColor
+                          : appointment.status === "Cancelled"
+                          ? "#f56565"
+                          : appointment.status === "Active"
+                          ? cyanColor
+                          : "transparent",
+                      color: "#fff",
+                    }}
+                  >
                     {appointment.status}
                   </TableCell>
                   <TableCell>{appointment.shift}</TableCell>
@@ -176,13 +211,25 @@ function DocBookings() {
                         Cancelled
                       </Button>
                     ) : appointment.status === "Completed" ? (
-                      <Button variant="contained" color="primary" onClick={() => handleOpenModal(appointment)}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleOpenModal(appointment)}
+                      >
                         Prescribe
                       </Button>
                     ) : (
                       <>
-                        <Button variant="contained" color="primary" style={{ marginRight: 8 }}>
-                          <Link to="/doctor/chat" state={{ data: appointment }} style={{ color: 'white', textDecoration: 'none' }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          style={{ marginRight: 8 }}
+                        >
+                          <Link
+                            to="/doctor/chat"
+                            state={{ data: appointment }}
+                            style={{ color: "white", textDecoration: "none" }}
+                          >
                             Intake
                           </Link>
                         </Button>
@@ -190,7 +237,9 @@ function DocBookings() {
                           variant="contained"
                           color="secondary"
                           onClick={() => handleCancel(appointment._id)}
-                          disabled={!canCancel(appointment.date, appointment.shift)}
+                          disabled={
+                            !canCancel(appointment.date, appointment.shift)
+                          }
                         >
                           Cancel
                         </Button>
@@ -198,7 +247,13 @@ function DocBookings() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Button variant="contained" color="success" onClick={() => handleHistoryClick(appointment.patientId._id)}>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() =>
+                        handleHistoryClick(appointment.patientId._id)
+                      }
+                    >
                       View History
                     </Button>
                   </TableCell>

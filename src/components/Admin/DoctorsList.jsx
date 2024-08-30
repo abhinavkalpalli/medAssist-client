@@ -1,18 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
-import Swal from 'sweetalert2';
-import { fetchDoctors, blockUnblockDoctor, verifyDoctorDocuments } from '../../services/admin/apiMethods';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, CircularProgress, Typography } from '@mui/material';
-import DocumentModal from './DocumentModal';
+import {
+  MdOutlineKeyboardDoubleArrowLeft,
+  MdOutlineKeyboardDoubleArrowRight,
+} from "react-icons/md";
+import Swal from "sweetalert2";
+import {
+  fetchDoctors,
+  blockUnblockDoctor,
+  verifyDoctorDocuments,
+} from "../../services/admin/apiMethods";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  TextField,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
+import DocumentModal from "./DocumentModal";
 
-const blueColor = '#2172d2';
-const tealColor = '#17d5d1';
+const blueColor = "#2172d2";
+const tealColor = "#17d5d1";
 
 function DoctorsList() {
   const [list, setList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,10 +40,11 @@ function DoctorsList() {
 
   const fetchData = async () => {
     const response = await fetchDoctors();
-    console.log(response.data.data);
     if (response.status === 200) {
       setList(response.data.data);
       setIsLoading(false);
+    } else {
+      toast.error("Something Went Wrong");
     }
   };
 
@@ -46,22 +66,44 @@ function DoctorsList() {
   const currentItems = filteredList.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => {
-    if (pageNumber === 'prev') {
+    if (pageNumber === "prev") {
       setCurrentPage((prev) => Math.max(prev - 1, 1));
-    } else if (pageNumber === 'next') {
-      setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(filteredList.length / itemsPerPage)));
+    } else if (pageNumber === "next") {
+      setCurrentPage((prev) =>
+        Math.min(prev + 1, Math.ceil(filteredList.length / itemsPerPage))
+      );
     } else {
       setCurrentPage(pageNumber);
     }
   };
-
   const changeStatus = async (id, status) => {
-    const response = await blockUnblockDoctor(id, status);
-    if (response.status === 200) {
-      fetchData();
-      toast.success(response.data.message);
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to ${
+        status === false ? "block" : "unblock"
+      } this doctor.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, do it!",
+      cancelButtonText: "No, cancel!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await blockUnblockDoctor(id, status);
+        if (response.status === 200) {
+          fetchData();
+          toast.success(response.data.message);
+        } else {
+          toast.error("Failed to update doctor status");
+        }
+      } catch (error) {
+        toast.error("An error occurred. Please try again.");
+      }
     } else {
-      toast.error('Failed to update doctor status');
+      toast.error("Action canceled");
     }
   };
 
@@ -72,7 +114,7 @@ function DoctorsList() {
       toast.success(response.data.message);
       setIsModalOpen(false);
     } else {
-      toast.error('Failed to verify documents');
+      toast.error("Failed to verify documents");
     }
   };
 
@@ -92,7 +134,12 @@ function DoctorsList() {
 
   return (
     <div className="m-4">
-       <h1 className="text-3xl font-bold mb-4" style={{ color: blueColor,textAlign:'center' }}>DOCTORS</h1>
+      <h1
+        className="text-3xl font-bold mb-4"
+        style={{ color: blueColor, textAlign: "center" }}
+      >
+        DOCTORS
+      </h1>
       <div className="flex items-center justify-between mb-4">
         <TextField
           id="table-search-doctors"
@@ -101,13 +148,13 @@ function DoctorsList() {
           size="small"
           value={searchTerm}
           onChange={handleSearch}
-          style={{ width: '300px' }}
+          style={{ width: "300px" }}
         />
       </div>
       <TableContainer component={Paper}>
         <Table aria-label="doctors table">
           <TableHead>
-            <TableRow style={{ backgroundColor: blueColor, color: '#fff' }}>
+            <TableRow style={{ backgroundColor: blueColor, color: "#fff" }}>
               <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Joined</TableCell>
@@ -120,34 +167,44 @@ function DoctorsList() {
           </TableHead>
           <TableBody>
             {currentItems.map((item) => (
-              <TableRow key={item._id} style={{ backgroundColor: '#fff', '&:hover': { backgroundColor: '#f5f5f5' } }}>
+              <TableRow
+                key={item._id}
+                style={{
+                  backgroundColor: "#fff",
+                  "&:hover": { backgroundColor: "#f5f5f5" },
+                }}
+              >
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.email}</TableCell>
-                <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
-                <TableCell style={{
-                  backgroundColor: item.is_Blocked ? '#f56565' : tealColor,
-                  color: '#fff'
-                }}>
-                  {item.is_Blocked ? 'Inactive' : 'Active'}
+                <TableCell>
+                  {new Date(item.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell
+                  style={{
+                    backgroundColor: item.is_Blocked ? "#f56565" : tealColor,
+                    color: "#fff",
+                  }}
+                >
+                  {item.is_Blocked ? "Inactive" : "Active"}
                 </TableCell>
                 <TableCell>{item.expertise?.name}</TableCell>
                 <TableCell>{item.gender}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
-                    color={item.documents_verified ? 'success' : 'info'}
+                    color={item.documents_verified ? "success" : "info"}
                     onClick={() => handleOpenModal(item.documents, item._id)}
                   >
-                    {item.documents_verified ? 'Verified' : 'Verify'}
+                    {item.documents_verified ? "Verified" : "Verify"}
                   </Button>
                 </TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
-                    color={item.is_Blocked ? 'success' : 'error'}
+                    color={item.is_Blocked ? "success" : "error"}
                     onClick={() => changeStatus(item._id, item.is_Blocked)}
                   >
-                    {item.is_Blocked ? 'Unblock' : 'Block'}
+                    {item.is_Blocked ? "Unblock" : "Block"}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -157,33 +214,43 @@ function DoctorsList() {
       </TableContainer>
       <div className="flex justify-center mt-4">
         <Button
-          onClick={() => paginate('prev')}
+          onClick={() => paginate("prev")}
           variant="contained"
           color="primary"
           disabled={currentPage === 1}
-          style={{ backgroundColor: blueColor, color: '#fff' }}
+          style={{ backgroundColor: blueColor, color: "#fff" }}
           className="mx-1"
         >
           <MdOutlineKeyboardDoubleArrowLeft />
         </Button>
-        {[...Array(Math.min(3, Math.ceil(filteredList.length / itemsPerPage))).keys()].map((index) => (
+        {[
+          ...Array(
+            Math.min(3, Math.ceil(filteredList.length / itemsPerPage))
+          ).keys(),
+        ].map((index) => (
           <Button
             key={index + 1}
             onClick={() => paginate(index + 1)}
             variant="contained"
-            color={currentPage === index + 1 ? 'primary' : 'default'}
-            style={{ backgroundColor: currentPage === index + 1 ? blueColor : '#e0e0e0', color: currentPage === index + 1 ? '#fff' : '#000' }}
+            color={currentPage === index + 1 ? "primary" : "default"}
+            style={{
+              backgroundColor:
+                currentPage === index + 1 ? blueColor : "#e0e0e0",
+              color: currentPage === index + 1 ? "#fff" : "#000",
+            }}
             className="mx-1"
           >
             {index + 1}
           </Button>
         ))}
         <Button
-          onClick={() => paginate('next')}
+          onClick={() => paginate("next")}
           variant="contained"
           color="primary"
-          disabled={currentPage === Math.ceil(filteredList.length / itemsPerPage)}
-          style={{ backgroundColor: blueColor, color: '#fff' }}
+          disabled={
+            currentPage === Math.ceil(filteredList.length / itemsPerPage)
+          }
+          style={{ backgroundColor: blueColor, color: "#fff" }}
           className="mx-1"
         >
           <MdOutlineKeyboardDoubleArrowRight />

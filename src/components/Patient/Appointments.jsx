@@ -29,6 +29,8 @@ import profileholder from "../../assets/Med Assist.png";
 import { styled } from "@mui/material/styles";
 import { tableCellClasses } from "@mui/material/TableCell";
 import StarRatingModal from "./StarRatingModal";
+import Nodata from "../ui/Nodata";
+import toast from "react-hot-toast";
 const style = {
   position: "absolute",
   top: "50%",
@@ -92,6 +94,7 @@ const Appointments = () => {
       setAppointments(response.data.data);
     } catch (error) {
       setError(error.message);
+      toast.error("Something Went Wrong");
     } finally {
       setLoading(false);
     }
@@ -206,7 +209,9 @@ const Appointments = () => {
       const paragraph = `
         This prescription is issued by Dr. ${
           selectedAppointment.doctorId.name
-        }, who specializes in ${selectedAppointment.doctorId.expertise.name} at ${
+        }, who specializes in ${
+        selectedAppointment.doctorId.expertise.name
+      } at ${
         selectedAppointment.doctorId.currentWorkingHospital
       }. The consultation took place on ${formatDate(
         selectedAppointment.date
@@ -315,149 +320,166 @@ const Appointments = () => {
   return (
     <>
       <div className="bg-gray-100">
-        <div className="container mx-auto py-8">
-          <div className="bg-white p-4 shadow rounded-lg">
-            <h1 className="text-2xl font-bold mb-4">
-              {appointments.length
-                ? "Your Appointments"
-                : "You Have No Appointments"}
-            </h1>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Doctor Name</StyledTableCell>
-                    <StyledTableCell>Expertise</StyledTableCell>
-                    <StyledTableCell>Booking Date</StyledTableCell>
-                    <StyledTableCell>Status</StyledTableCell>
-                    <StyledTableCell>Time</StyledTableCell>
-                    <StyledTableCell>Actions</StyledTableCell>
-                    <StyledTableCell>Last Visit</StyledTableCell>
-                    <StyledTableCell>Review</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {currentAppointments.map((appointment) => {
-                    const lastVisit = getLastVisit(appointment.doctorId._id);
+        {appointments.length < 1 ? (
+          <Nodata />
+        ) : (
+          <>
+            {" "}
+            <div className="container mx-auto py-8">
+              <div className="bg-white p-4 shadow rounded-lg">
+                <h1
+                  className={`text-4xl font-extrabold mb-6 text-center text-gray-800`}
+                >
+                  Your Appointments
+                </h1>
 
-                    return (
-                      <StyledTableRow key={appointment._id}>
-                        <StyledTableCell>{`DR ${appointment.doctorId.name}`}</StyledTableCell>
-                        <StyledTableCell>
-                          {appointment.doctorId.expertise.name}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {formatDate(appointment.date)}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          style={{
-                            backgroundColor:
-                              appointment.status === "Active"
-                                ? cyanColor
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <TableHead>
+                      <TableRow>
+                        <StyledTableCell>Doctor Name</StyledTableCell>
+                        <StyledTableCell>Expertise</StyledTableCell>
+                        <StyledTableCell>Booking Date</StyledTableCell>
+                        <StyledTableCell>Status</StyledTableCell>
+                        <StyledTableCell>Time</StyledTableCell>
+                        <StyledTableCell>Actions</StyledTableCell>
+                        <StyledTableCell>Last Visit</StyledTableCell>
+                        <StyledTableCell>Review</StyledTableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {currentAppointments.map((appointment) => {
+                        const lastVisit = getLastVisit(
+                          appointment.doctorId._id
+                        );
+
+                        return (
+                          <StyledTableRow key={appointment._id}>
+                            <StyledTableCell>{`DR ${appointment.doctorId.name}`}</StyledTableCell>
+                            <StyledTableCell>
+                              {appointment.doctorId.expertise.name}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {formatDate(appointment.date)}
+                            </StyledTableCell>
+                            <StyledTableCell
+                              style={{
+                                backgroundColor:
+                                  appointment.status === "Active"
+                                    ? cyanColor
+                                    : appointment.status === "Cancelled"
+                                    ? "#f56565"
+                                    : appointment.status === "Completed"
+                                    ? tealColor
+                                    : "",
+                                color: "#fff",
+                              }}
+                            >
+                              {appointment.status === "Active"
+                                ? "Upcoming"
                                 : appointment.status === "Cancelled"
-                                ? "#f56565"
+                                ? "Cancelled"
                                 : appointment.status === "Completed"
-                                ? tealColor
-                                : "",
-                            color: "#fff",
-                          }}
-                        >
-                          {appointment.status === "Active"
-                            ? "Upcoming"
-                            : appointment.status === "Cancelled"
-                            ? "Cancelled"
-                            : appointment.status === "Completed"
-                            ? "Completed"
-                            : appointment.status}
-                        </StyledTableCell>
-                        <StyledTableCell>{appointment.shift}</StyledTableCell>
-                        <StyledTableCell>
-                          {appointment.status === "Active" && (
-                            <Button
-                              onClick={() =>
-                                handleAppointmentCancellation(appointment._id)
-                              }
-                              variant="contained"
-                              color="primary"
-                              style={{
-                                backgroundColor: blueColor,
-                                color: "#fff",
-                              }}
-                              className="mx-1"
-                            >
-                              Cancel
-                            </Button>
-                          )}
-                          {appointment.status === "Completed" && (
-                            <Button
-                              onClick={() => handleOpenModal(appointment)}
-                              variant="contained"
-                              color="primary"
-                              style={{
-                                backgroundColor: blueColor,
-                                color: "#fff",
-                              }}
-                              className="mx-1"
-                            >
-                              Prescription
-                            </Button>
-                          )}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          <p>
-                            <strong>Last Visit Date:</strong> {lastVisit.date}
-                          </p>
-                          <p>
-                            <strong>Shift:</strong> {lastVisit.shift}
-                          </p>
-                        </StyledTableCell>
-                        {appointment.status === "Completed" && (
-                          <StyledTableCell>
-                            <Button
-                              onClick={() => handleReviewModelOpen(appointment)}
-                              variant="contained"
-                              color="primary"
-                              style={{
-                                backgroundColor: yellowColor,
-                                color: "#fff",
-                              }}
-                              className="mx-1"
-                            >
-                              Review
-                            </Button>
-                          </StyledTableCell>
-                        )}
-                      </StyledTableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <div className="flex justify-center mt-4">
-              <Button
-                onClick={handlePreviousPage}
-                variant="contained"
-                color="primary"
-                style={{ backgroundColor: blueColor, color: "#fff" }}
-                disabled={currentPage === 1}
-                className="mx-2"
-              >
-                <MdOutlineKeyboardDoubleArrowLeft />
-              </Button>
-              {renderPageNumbers()}
-              <Button
-                onClick={handleNextPage}
-                variant="contained"
-                color="primary"
-                style={{ backgroundColor: blueColor, color: "#fff" }}
-                disabled={currentPage === totalPages}
-                className="mx-2"
-              >
-                <MdOutlineKeyboardDoubleArrowRight />
-              </Button>
+                                ? "Completed"
+                                : appointment.status}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {appointment.shift}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              {appointment.status === "Active" && (
+                                <Button
+                                  onClick={() =>
+                                    handleAppointmentCancellation(
+                                      appointment._id
+                                    )
+                                  }
+                                  variant="contained"
+                                  color="primary"
+                                  style={{
+                                    backgroundColor: blueColor,
+                                    color: "#fff",
+                                  }}
+                                  className="mx-1"
+                                >
+                                  Cancel
+                                </Button>
+                              )}
+                              {appointment.status === "Completed" && (
+                                <Button
+                                  onClick={() => handleOpenModal(appointment)}
+                                  variant="contained"
+                                  color="primary"
+                                  style={{
+                                    backgroundColor: blueColor,
+                                    color: "#fff",
+                                  }}
+                                  className="mx-1"
+                                >
+                                  Prescription
+                                </Button>
+                              )}
+                            </StyledTableCell>
+                            <StyledTableCell>
+                              <p>
+                                <strong>Last Visit Date:</strong>{" "}
+                                {lastVisit.date}
+                              </p>
+                              <p>
+                                <strong>Shift:</strong> {lastVisit.shift}
+                              </p>
+                            </StyledTableCell>
+                            {appointment.status === "Completed" && (
+                              <StyledTableCell>
+                                <Button
+                                  onClick={() =>
+                                    handleReviewModelOpen(appointment)
+                                  }
+                                  variant="contained"
+                                  color="primary"
+                                  style={{
+                                    backgroundColor: yellowColor,
+                                    color: "#fff",
+                                  }}
+                                  className="mx-1"
+                                >
+                                  Review
+                                </Button>
+                              </StyledTableCell>
+                            )}
+                          </StyledTableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                <div className="flex justify-center mt-4">
+                  <Button
+                    onClick={handlePreviousPage}
+                    variant="contained"
+                    color="primary"
+                    style={{ backgroundColor: blueColor, color: "#fff" }}
+                    disabled={currentPage === 1}
+                    className="mx-2"
+                  >
+                    <MdOutlineKeyboardDoubleArrowLeft />
+                  </Button>
+                  {renderPageNumbers()}
+                  <Button
+                    onClick={handleNextPage}
+                    variant="contained"
+                    color="primary"
+                    style={{ backgroundColor: blueColor, color: "#fff" }}
+                    disabled={currentPage === totalPages}
+                    className="mx-2"
+                  >
+                    <MdOutlineKeyboardDoubleArrowRight />
+                  </Button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
       <Modal open={reviewModalOpen} onClose={handleReviewModelClose}>
         <StarRatingModal

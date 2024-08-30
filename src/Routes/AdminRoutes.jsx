@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Loader from '../components/Loader/Loader';
 import SiderBar from '../pages/admin/AdminHome';
 import Adminhead from '../components/Admin/Adminhead';
+import AdminPrivateRoutes from './AdminPrivateRoutes';
 
 const AdminSignup=lazy(()=>import("../pages/login/Adminsignup"))
 const Patients = lazy(() => import("../components/Admin/UsersList"));
@@ -13,7 +14,6 @@ const AdminLogin = lazy(() => import("../pages/login/AdminLogin"));
 const Header = lazy(() => import('../components/Guest/Header'));
 const Footer = lazy(() => import('../components/Guest/Footer'));
 const AdminDashBoard = lazy(() => import('../components/Admin/AdminDash'));
-const Error404=lazy(()=>import('../components/Error/Error'))
 const Expertise=lazy(()=>import('../components/Admin/Expertise'))
 function AdminRoutes() {
   return (
@@ -21,6 +21,7 @@ function AdminRoutes() {
       <Routes>
         <Route path="/login" element={<><Header/><AdminLogin /><Footer/></>} />
         <Route path="/signup" element={<><Header/><AdminSignup /><Footer/></>} />
+        <Route element={<AdminPrivateRoutes/>}>
         <Route 
           path="/*" 
           element={
@@ -34,7 +35,6 @@ function AdminRoutes() {
                 </div>
                 <div className="flex-1 overflow-y-auto p-4">
                   <Routes>
-                    <Route path='*' element={<Error404/>}/>
                     <Route path="/patients" element={<Patients />} />
                     <Route path="/expertise" element={<Expertise />} />
                     <Route path="/doctors" element={<DoctorList />} />
@@ -47,6 +47,7 @@ function AdminRoutes() {
             </div>
           } 
         />
+        </Route>
       </Routes>
     </Suspense>
   );

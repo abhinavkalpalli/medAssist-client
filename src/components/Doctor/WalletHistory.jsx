@@ -14,6 +14,7 @@ import {
   MdOutlineKeyboardDoubleArrowLeft,
   MdOutlineKeyboardDoubleArrowRight,
 } from "react-icons/md";
+import Nodata from "../ui/Nodata";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -94,54 +95,64 @@ function WalletHistory() {
 
   return (
     <div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="wallet history table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Date</StyledTableCell>
-              <StyledTableCell align="right">Amount</StyledTableCell>
-              <StyledTableCell align="right">Message</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedHistory.map((entry, index) => (
-              <StyledTableRow
-                key={index}
-                isNegative={String(entry.amount).includes("-")}
-              >
-                <StyledTableCell component="th" scope="row">
-                  {entry.date}
-                </StyledTableCell>
-                <StyledTableCell align="right">{entry.amount}</StyledTableCell>
-                <StyledTableCell align="right">{entry.message}</StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div className="flex justify-center mt-4">
-        <Button
-          onClick={handlePreviousPage}
-          variant="contained"
-          color="primary"
-          style={{ backgroundColor: "#0000FF", color: "#fff" }}
-          disabled={currentPage === 1}
-          className="mx-2"
-        >
-          <MdOutlineKeyboardDoubleArrowLeft />
-        </Button>
-        {renderPageNumbers()}
-        <Button
-          onClick={handleNextPage}
-          variant="contained"
-          color="primary"
-          style={{ backgroundColor: "#0000FF", color: "#fff" }}
-          disabled={currentPage === totalPages}
-          className="mx-2"
-        >
-          <MdOutlineKeyboardDoubleArrowRight />
-        </Button>
-      </div>
+      {walletHistory.length < 1 ? (
+        <Nodata />
+      ) : (
+        <>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="wallet history table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Date</StyledTableCell>
+                  <StyledTableCell align="right">Amount</StyledTableCell>
+                  <StyledTableCell align="right">Message</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedHistory.map((entry, index) => (
+                  <StyledTableRow
+                    key={index}
+                    isNegative={String(entry.amount).includes("-")}
+                  >
+                    <StyledTableCell component="th" scope="row">
+                      {entry.date}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {entry.amount}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {entry.message}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <div className="flex justify-center mt-4">
+            <Button
+              onClick={handlePreviousPage}
+              variant="contained"
+              color="primary"
+              style={{ backgroundColor: "#0000FF", color: "#fff" }}
+              disabled={currentPage === 1}
+              className="mx-2"
+            >
+              <MdOutlineKeyboardDoubleArrowLeft />
+            </Button>
+            {renderPageNumbers()}
+            <Button
+              onClick={handleNextPage}
+              variant="contained"
+              color="primary"
+              style={{ backgroundColor: "#0000FF", color: "#fff" }}
+              disabled={currentPage === totalPages}
+              className="mx-2"
+            >
+              <MdOutlineKeyboardDoubleArrowRight />
+            </Button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

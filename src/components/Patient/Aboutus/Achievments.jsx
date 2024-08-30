@@ -1,10 +1,12 @@
+import image from '../../../assets/happy.jpg'
+import banner from '../../../assets/banner2.jfif'
 function Achievements() {
   return (
     <div className="bg-white">
       <div
         className="h-72 w-full "
         style={{
-          backgroundImage: `url("/assets/banner2.jfif")`,
+          backgroundImage: `url${banner}`,
         }}
       >
         <div className="w-full h-full bg-blue-950 opacity-80 flex items-center justify-center">
@@ -18,7 +20,7 @@ function Achievements() {
               <div className="boder-2 h-1 w-20 bg-gray-300"></div>
             </div>
             <p className="text-sm text-white font-thin">
-              MIND CARE IS HERE TO HEAR YOU
+              MED ASSIST IS HERE TO HEAR YOU
             </p>
           </div>
         </div>
@@ -51,7 +53,7 @@ function Achievements() {
           </p>
         </div>
         <div className="md:p-8 flex justify-center">
-          <img className="h-[90%]" src="/assets/img2.jfif" alt="" />
+          <img className="h-[70%]" src={image} alt="" />
         </div>
       </div>
     </div>

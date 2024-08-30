@@ -1,0 +1,31 @@
+.signup-container {
+    display: flex;
+    min-height: calc(100vh - 64px); /* Adjust based on header/footer height */
+    margin-top: 64px; /* Adjust based on header height */
+    margin-bottom: 64px; /* Adjust based on footer height */
+  }
+  
+  .signup-image {
+    background-image: url('https://images.pexels.com/photos/48604/pexels-photo-48604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-size: cover;
+    background-position: center;
+    height: 62vh; /* Full height of the viewport */
+  }
+  
+  .signup-form-container {
+    padding: 20px;
+  }
+  
+  .signup-title {
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .signup-submit {
+    margin-top: 15px;
+  }
+  
+  .signup-link-container {
+    margin-top: 10px;
+  }
+  

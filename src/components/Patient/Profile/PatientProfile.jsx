@@ -43,7 +43,8 @@ function PatientProfile() {
           toast.success(`Gentle reminder that you have an appointment today at ${appointment.shift}`);
         });
       }
-      
+    }else{
+      toast.error('Something Went Wrong')
     }
   }
 

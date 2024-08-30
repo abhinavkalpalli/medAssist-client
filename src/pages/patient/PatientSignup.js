@@ -18,6 +18,7 @@ import {
 import { regValidate, passwordValidate } from "../../hooks/regValidation";
 import { postRegister } from "../../services/patient/apiMethods";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function PatientSignup() {
   const [errors, setErrors] = useState({
@@ -63,20 +64,15 @@ export default function PatientSignup() {
       try {
         const response = await postRegister(formValues);
         if (response.status === 201) {
-          const {email,otp}=response.data
-          navigate('/otp-verification',{state:{email,otp}})
+          const { email, otp } = response.data;
+          navigate("/otp-verification", { state: { email, otp } });
         } else {
-          setErrors({
-            ...errors,
-            serverError: "Registration failed. Please try again later.",
-          });
+          setErrors(response.message);
+          toast.error(response.message);
         }
       } catch (error) {
-        console.error("Error during registration:", error);
-        setErrors({
-          ...errors,
-          serverError: "An unexpected error occurred. Please try again later.",
-        });
+        setErrors(error?.response?.message || error?.message);
+        toast.error(error?.response?.message || error?.message);
       }
     } else {
       setErrors((prevErrors) => ({
@@ -133,7 +129,13 @@ export default function PatientSignup() {
             <Typography component="h1" variant="h5" className="signup-title">
               Sign up as a Patient
             </Typography>
-            <Box component="form" noValidate sx={{ mt: 1 }} ref={formRef} onSubmit={handleSubmit}>
+            <Box
+              component="form"
+              noValidate
+              sx={{ mt: 1 }}
+              ref={formRef}
+              onSubmit={handleSubmit}
+            >
               <TextField
                 margin="normal"
                 required

@@ -3,6 +3,8 @@ import { Bookings } from "../../../services/admin/apiMethods";
 import LineChart from "./LineChart";
 import BarChart from "./BarChart";
 import Doctorstats from "./Doctors";
+import toast from "react-hot-toast";
+
 
 function Dashboard() {
   const [patients, setPatients] = useState([]);
@@ -22,7 +24,8 @@ function Dashboard() {
         calculateTotalIncome(response.data.bookings);
         calculateMonthlyIncome(response.data.bookings);
         calculateTotalPossibleIncome(response.data.bookings);
-
+      }else{
+        toast.error('Something Went Wrong')
       }
     };
     fetchAppointments();

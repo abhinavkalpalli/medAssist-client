@@ -19,6 +19,8 @@ export const otpverify=(userData)=>{
         try{
             apiCall("post",userUrl.otpverify,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -30,6 +32,8 @@ export const forgotpassword=(userData)=>{
         try{
             apiCall("post",userUrl.forgotpassword,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -66,7 +70,6 @@ export const editPatient=(userData)=>{
     return new Promise((resolve,reject)=>{
         try{
             apiCall("put",userUrl.editPatient,userData).then((response)=>{
-                console.log(response);
                 resolve(response)
             }).catch((err)=>{
                 console.log('autherr',err);
@@ -91,8 +94,6 @@ export const resendOtp=(userData)=>{
     })
 }
 export const findDoctors=(userData)=>{
-    console.log(userData);
-    
     return new Promise((resolve,reject)=>{
         try{
             apiCall("get",userUrl.fetchDoctors,{params:userData}).then((response)=>{
@@ -175,6 +176,8 @@ export const setFavouriteDoctor=(userData)=>{
         try{
             apiCall("patch",userUrl.setFavourite,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})

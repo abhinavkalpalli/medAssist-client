@@ -20,6 +20,7 @@ import { useDispatch,useSelector } from "react-redux";
 import { setReduxUser } from "../../utils/reducers/userReducer";
 import { userAuth,refreshToken } from "../../const/localStorage";
 import ErrorBoundary from "../../components/Error/ErrorBoundary";
+import toast from "react-hot-toast";
 export default function Login() {
   const auth=getAuth(app)
   const [openModal, setOpenModal] = useState(false);
@@ -98,9 +99,12 @@ export default function Login() {
        else {
           setError(response.message);
         }
-    }catch(err){
-      throw err
     }
+      catch(error) {
+        const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+        setError(errorMessage)
+    }
+    
   };
 
   const navigateToPatientSignup = () => {
@@ -142,7 +146,7 @@ export default function Login() {
         >
           <Box className="login-box">
             <Typography component="h1" variant="h5" className="login-title">
-              Sign in
+              Patient Signin
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField

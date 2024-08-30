@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import profilePlaceholder from "../../assets/admin.png";
 import { removeAdmin } from "../../utils/reducers/adminReducer";
-import SetFeeModal from "./setFeeModal"; // Adjust the path according to your directory structure
+import SetFeeModal from "./setFeeModal"; 
 
 function AdminHome() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function AdminHome() {
   const logout = () => {
     try {
       dispatch(removeAdmin());
-      navigate('/login', { replace: true });
+      navigate('/admin/login', { replace: true });
     } catch (err) {
       console.log(err);
     }

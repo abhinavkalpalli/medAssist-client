@@ -100,8 +100,9 @@ export default function DoctorLogin() {
         dispatch(setDoctors({ doctorData: response.data, validUser: true }));
         navigate("/doctor/dashboard");
       }
-    } catch (err) {
-      throw err;
+    } catch (error) {
+      const errorMessage = error?.response?.data?.message || error?.message || "An unexpected error occurred";
+        setError(errorMessage)
     }
   };
 

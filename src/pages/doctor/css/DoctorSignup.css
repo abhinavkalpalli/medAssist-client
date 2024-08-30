@@ -1,31 +1,28 @@
-/* Ensure the image and form container take up correct space */
 .signup-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
+  min-height: calc(100vh - 64px); /* Ensures the form is between header and footer */
+  margin-top: 64px; 
+  margin-bottom: 64px; 
+  max-width: 1200px; 
+  margin-left: auto; 
+  margin-right: auto;
 }
 
 .signup-image {
-  background-image: url('https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+  background-image: url("https://images.pexels.com/photos/5215024/pexels-photo-5215024.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1");
   background-size: cover;
   background-position: center;
-  width: 50%; /* Take up half the width */
-  height: 100%; /* Full height */
 }
 
 .signup-form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center; /* Center form vertically */
-  width: 50%; /* Take up half the width */
   padding: 20px;
-  box-sizing: border-box;
 }
 
 .signup-box {
-  width: 100%; /* Full width of the form container */
+  width: 100%;
+  padding: 20px;
 }
 
 .signup-title {
@@ -33,61 +30,28 @@
   text-align: center;
 }
 
-.signup-button {
-  margin: 20px 0;
-  width: 100%;
-}
-
-
-.working-days-checkbox-group {
-  margin: 16px 0;
-}
-
-.gender-title,
-.working-days-title {
-  margin-bottom: 8px;
-}
-
-
-.working-days-options {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-
-.working-days-checkbox {
-  margin-right: 16px;
-}
-
 .gender-radio-group {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 16px 0;
-  text-align: left;
+  margin-top: 20px;
 }
 
 .gender-title {
-  font-size: 14px;
-  color: #333;
-  margin-right: 16px;
+  font-weight: 600;
 }
 
 .gender-options {
   display: flex;
-  gap: 16px;
+  justify-content: space-between;
 }
 
 .gender-radio {
-  display: flex;
-  align-items: center;
+  margin-right: 20px;
 }
 
-.gender-radio input {
-  margin-right: 4px;
+.signup-button {
+  margin-top: 20px;
+  background-color: #1976d2;
 }
 
-.gender-radio label {
-  font-size: 14px;
-  color: #333;
+.signup-link {
+  text-align: right;
 }

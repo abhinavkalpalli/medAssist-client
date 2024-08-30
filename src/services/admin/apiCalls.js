@@ -36,31 +36,31 @@ export const clearUser = () => {
                 error = err;
               })
             }
-            
-            if(response){
+            if (response) {
               resolve(response);
             } else if (error) {
-              if(error?.data?.status === 403 && error?.data?.error_code === "FORBIDDEN"){
-                localStorage.setItem(adminAuth, "");
+              // Handle forbidden error
+              if (error?.response?.status === 403 && error?.response?.data?.error_code === 'FORBIDDEN') {
                 clearUser();
-                window.location.reload("/login");
               }
-              if(error?.response?.status === 401){
-                refreshAccessToken(error).then((response)=> {
-                    resolve(response?.data);
-                }).catch((error)=>{
-                  if(error.response?.status === 401){
-                    clearUser()
+              // Handle unauthorized error
+              if (error?.response?.status === 401) {
+                try {
+                  const newTokenResponse = await refreshAccessToken(error);
+                  resolve(newTokenResponse?.data);
+                } catch (refreshError) {
+                  if (refreshError.response?.status === 401) {
+                    clearUser();
                   } else {
-                    reject(error);
+                    reject(refreshError);
                   }
-                })
+                }
               } else {
                 reject(error?.response?.data);
               }
             }
           } catch (err) {
-              reject(err);
+            reject(err);
           }
         });
 };

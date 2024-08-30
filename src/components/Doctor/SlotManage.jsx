@@ -30,6 +30,15 @@ const SlotManage = () => {
       return;
     }
 
+    // Parse the times for comparison
+    const start = new Date(`1970-01-01T${startTime}`);
+    const end = new Date(`1970-01-01T${endTime}`);
+
+    if (start >= end) {
+      toast.error("Start time must be earlier than end time");
+      return;
+    }
+
     // Create slots data array
     const slotsData = eachDayOfInterval({
       start: startDate,
@@ -48,7 +57,7 @@ const SlotManage = () => {
 
       if (response.status === 200) {
         toast.success("Slots created successfully");
-        fetchAndDisplaySlots(); 
+        fetchAndDisplaySlots();
       } else {
         const errorMessage = response.data?.message || "Failed to create slots";
         toast.error(errorMessage);
@@ -231,8 +240,8 @@ const SlotManage = () => {
             ))
           ) : (
             <div className="col-span-full flex items-center justify-center p-2 bg-red-100 rounded-lg">
-      No slots available for the selected date
-    </div>
+              No slots available for the selected date
+            </div>
           )}
         </div>
       </div>

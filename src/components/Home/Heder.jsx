@@ -8,9 +8,7 @@ import profilePlaceholder from "../../assets/user.png";
 import logo from "../../assets/Med Assist.png";
 
 const navigation = [
-  { name: "Home", href: "/home" },
-  { name: "Doctors", href: "/Doctors" },
-  { name: "About us", href: "/Aboutus" },
+  { name: "About us", href: "/patient/aboutUs" },
   { name: "Messages", href: "/patient/chat" },
 ];
 

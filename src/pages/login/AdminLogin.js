@@ -27,7 +27,6 @@ export default function AdminLogin() {
 
   useEffect(()=>{
     if(adminData){
-      console.log(adminData);
       navigate('/admin/dashboard')
     }
   },[adminData])
@@ -102,7 +101,7 @@ export default function AdminLogin() {
         >
           <Box className="login-box">
             <Typography component="h1" variant="h5" className="login-title">
-              Sign in
+              Admin Login
             </Typography>
             <Box component="form" noValidate sx={{ mt: 1 }}>
               <TextField
@@ -127,6 +126,11 @@ export default function AdminLogin() {
                 autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
               />
+               {error ? (
+                      <div className="text-red-600 text-sm font-extralight py-2">
+                        ! {error}
+                      </div>
+                    ) : null}
               <Button
                 type="submit"
                 fullWidth

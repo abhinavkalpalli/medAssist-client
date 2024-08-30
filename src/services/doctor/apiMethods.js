@@ -19,6 +19,8 @@ export const doctorotpverify=(userData)=>{
         try{
             apiCall("post",userUrl.doctorotpverify,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -30,6 +32,8 @@ export const doctorforgotpassword=(userData)=>{
         try{
             apiCall("post",userUrl.doctorforgotpassword,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})
@@ -41,6 +45,8 @@ export const doctorresetpassword=(userData)=>{
         try{
             apiCall("post",userUrl.doctorresetpassword,userData).then((response)=>{
                 resolve(response)
+            }).catch((err)=>{
+                reject(err)
             })
         }catch(error){
             resolve({status:500,message:'Something went wrong'})

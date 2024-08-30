@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,16 +8,17 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import './Login.css';
+import './AdminSignup.css';
 import { adminRegister } from "../../services/admin/apiMethods";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function AdminSignup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [reEnterPassword, setReEnterPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const handleOnSubmit = async (e) => {
     e.preventDefault();
@@ -28,47 +28,50 @@ export default function AdminSignup() {
 
     if (!emailRegex.test(email)) {
       setError("Invalid email address");
+      toast.error('Invalid email address');
       return;
     }
-
-    const response=await adminRegister({email,password})
-    if(response.status ===201){
-      const {email,otp}=response.data
-      const isAdmin=true
-      navigate('/otp-verification',{state:{email,otp,isAdmin}})
+    if (password !== reEnterPassword) {
+      setError("Passwords don't match");
+      toast.error("Passwords don't match");
+      return;
+    }
+    try {
+      const response = await adminRegister({ email, password });
+      if (response.status === 201) {
+        const { email, otp } = response.data;
+        const isAdmin = true;
+        navigate('/otp-verification', { state: { email, otp, isAdmin } });
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      toast.error(error?.response?.message || error?.message || "An error occurred");
     }
   };
 
   return (
     <Container component="main" maxWidth="lg" className="signup-container">
       <CssBaseline />
-      <Grid container spacing={2}>
+      <Grid container spacing={0}>
         <Grid
           item
-          xs={false}
+          xs={12}
           sm={4}
-          md={7}
           className="signup-image"
-          style={{
-            backgroundImage: `url('https://images.pexels.com/photos/48604/pexels-photo-48604.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
         />
         <Grid
           item
           xs={12}
           sm={8}
-          md={5}
           component={Paper}
           elevation={6}
           square
           className="signup-form-container"
         >
-          <Box className="signup-box">
+          <Box sx={{ p: 3 }}>
             <Typography component="h1" variant="h5" className="signup-title">
-              Sign up
+              Admin Sign Up
             </Typography>
             <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleOnSubmit}>
               <TextField
@@ -80,9 +83,10 @@ export default function AdminSignup() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                error={!!error}
-                helperText={error}
+                error={!!error && error.includes("email")}
+                helperText={error.includes("email") ? error : ""}
               />
               <TextField
                 margin="normal"
@@ -93,7 +97,10 @@ export default function AdminSignup() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                error={!!error && error.includes("Passwords")}
+                helperText={error.includes("Passwords") ? error : ""}
               />
               <TextField
                 margin="normal"
@@ -104,17 +111,20 @@ export default function AdminSignup() {
                 type="password"
                 id="reEnterPassword"
                 autoComplete="current-password"
+                value={reEnterPassword}
                 onChange={(e) => setReEnterPassword(e.target.value)}
+                error={!!error && error.includes("Passwords")}
+                helperText={error.includes("Passwords") ? error : ""}
               />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                className="signup-button"
+                className="signup-submit"
               >
                 Sign Up
               </Button>
-              <Grid container className="signup-link-container">
+              <Grid container>
                 <Grid item xs>
                   <Link href="/admin/login" variant="body2">
                     Already have an account? Sign in

@@ -106,14 +106,17 @@ function DoctorProfile() {
       expertise: selectedExpertise,
       education,
     };
-
-    const response = await editDoctor(formData);
-    if (response.status === 200) {
-      toast.success("Profile updated successfully");
-      dispatch(updateDoctor({ doctorData: response.data }));
-      setIsChanged(false);
-    } else {
-      toast.error("Failed to update profile");
+    try {
+      const response = await editDoctor(formData);
+      if (response.status === 200) {
+        toast.success("Profile updated successfully");
+        dispatch(updateDoctor({ doctorData: response.data }));
+        setIsChanged(false);
+      } else {
+        toast.error("Failed to update profile");
+      }
+    } catch (error) {
+      toast.error("Something Went Wrong");
     }
   };
 

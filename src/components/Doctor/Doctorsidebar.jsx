@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import profilePlaceholder from '../../assets/doctor.jpg';
+import profilePlaceholder from "../../assets/doctor.jpg";
 import { removeDoctor } from "../../utils/reducers/doctorReducer";
-import DocumentModal from './DocumentModal'; 
+import DocumentModal from "./DocumentModal";
 
 function Doctorsidebar() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ function Doctorsidebar() {
   const logout = () => {
     try {
       dispatch(removeDoctor());
-      navigate('/login', { replace: true });
+      navigate("/doctor/login", { replace: true });
     } catch (err) {
       console.log(err);
     }
@@ -65,7 +65,7 @@ function Doctorsidebar() {
             {doctorData.expertise?.name}
           </p>
           <p className="text-gray-700 font-bold text-center">
-           Wallet: ₹{doctorData.Wallet}
+            Wallet: ₹{doctorData.Wallet}
           </p>
         </div>
         <hr className="border-t border-gray-300" />
@@ -108,7 +108,7 @@ function Doctorsidebar() {
             </li>
             <li className="mb-2">
               <div className={getLinkClass("/doctor/walletHistory")}>
-                <Link to="/doctor/walletHistory" className="block" >
+                <Link to="/doctor/walletHistory" className="block">
                   WALLETHISTORY
                 </Link>
               </div>

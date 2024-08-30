@@ -3,13 +3,21 @@ import { userAuth, refreshToken } from '../../const/localStorage';
 import { persistor } from '../../app/store';
 import { BASE_URL } from '../../const/url';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // or your preferred routing solution
+import Swal from "sweetalert2";
+
+
 
 // Function to clear user data and navigate to login
-export const clearUser = () => {
+
+export const clearUser = async() => {
   localStorage.removeItem(userAuth);
-  localStorage.removeItem(refreshToken);
   persistor.purge();
+  await Swal.fire({
+    title: 'Blocked',
+    text: 'You are blocked by Admin',
+    icon: 'error',
+    confirmButtonText: 'OK'
+  });
   window.location.reload("/login");
 };
 
@@ -48,7 +56,9 @@ export const apiCall = async (method, url, data) => {
         console.log('Error response:', error);
 
         // Handle forbidden error
-        if (error?.response?.status === 403 && error?.response?.data?.error_code === 'FORBIDDEN') {
+        if (error?.response?.status === 403 ) {
+          localStorage.setItem(userAuth, "");
+          localStorage.setItem(refreshToken, "");
           clearUser();
         }
 
@@ -65,7 +75,8 @@ export const apiCall = async (method, url, data) => {
             }
           }
         } else {
-          reject(error?.response?.data);
+          reject(error?.response?.data||error.message);
+          //reject(error?.message);
         }
       }
     } catch (err) {
@@ -77,25 +88,53 @@ export const apiCall = async (method, url, data) => {
 // Function to refresh access token
 const refreshAccessToken = async (error) => {
   try {
-    const tokenRefresh = localStorage.getItem(refreshToken);
+    if (error.response?.status === 401) {
+      const tokenRefresh = localStorage.getItem(refreshToken);
 
-    if (tokenRefresh) {
+      if (tokenRefresh) {
+        error.config._retry = true;
 
-      const response = await axios.post(
-        `${BASE_URL}/api/auth/patient/refresh-token`,
-        null,
-        { headers: { Authorization: tokenRefresh } }
-      );
+        return new Promise(async (resolve, reject) => {
+          try {
+            //refreshing the access token
+            const response = await axios
+              .post(
+                `${BASE_URL}/api/auth/patient/refresh-token`,
+                null,
+                {
+                  headers: {
+                    Authorization: tokenRefresh,
+                  },
+                }
+              )
+              .catch((err) => {
+                reject(err);
+              });
+            if(response){
+              const newAccessToken = response.data.newToken;
+              localStorage.setItem(userAuth, newAccessToken);
 
-      const newAccessToken = response.data.newToken;
-      localStorage.setItem(userAuth, newAccessToken);
-      error.config.headers['Authorization'] = newAccessToken;
-      return axios(error.config);
-    } else {
-      clearUser();
+              //calling the original request
+              error.config.headers["Authorization"] = newAccessToken;
+
+
+              axios(error.config)
+                .then((response) => {
+                  resolve(response);
+                })
+                .catch((error) => {
+                  reject(error);
+                });
+            }
+          } catch (refreshError) {
+            reject(refreshError);
+          }
+        })
+      } else {
+        clearUser();
+      }
     }
   } catch (error) {
-    clearUser();
-    throw error;
+    clearUser()
   }
-};
+}
