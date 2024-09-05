@@ -76,7 +76,6 @@ export const apiCall = async (method, url, data) => {
           }
         } else {
           reject(error?.response?.data||error.message);
-          //reject(error?.message);
         }
       }
     } catch (err) {

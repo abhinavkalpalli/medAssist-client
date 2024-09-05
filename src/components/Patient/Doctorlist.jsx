@@ -53,12 +53,17 @@ function DoctorList() {
 
   const endDate = new Date();
   endDate.setDate(endDate.getDate() + 7);
+
   const fetchData = async () => {
-    const response = await expertise();
-    if (response.status === 200) {
-      setSpecializations(response.data.data);
-    } else {
-      toast.error("Something Went Wrong");
+    try {
+      const response = await expertise();
+      if (response.status === 200) {
+        setSpecializations(response.data.data);
+      } else {
+        toast.error("Something Went Wrong");
+      }
+    } catch (error) {
+      toast.error("Something Went Wrong"); 
     }
   };
 
@@ -88,14 +93,14 @@ function DoctorList() {
   }, [Doctor]);
 
   const fetchDoctors = async () => {
-    const data = {
-      page: currentPage,
-      limit: itemsPerPage,
-      experience: experienceFilter,
-      gender: genderFilter,
-      expertise: selectedExpertise,
-    };
     try {
+      const data = {
+        page: currentPage,
+        limit: itemsPerPage,
+        experience: experienceFilter,
+        gender: genderFilter,
+        expertise: selectedExpertise,
+      };
       const response = await findDoctors(data);
       if (response.status === 200) {
         setDoctors(response.data.data.doctors);
