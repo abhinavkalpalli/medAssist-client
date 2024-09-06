@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { BiPhoneCall, BiPhoneOff } from "react-icons/bi";
 import Callreject from "../components/Patient/Callreject"
-const Serverhost='https://medassist.website'
+const Serverhost=process.env.REACT_APP_SERVERHOST
 const SocketContext = createContext();
 export const useSocketContext = () => {
   return useContext(SocketContext);
