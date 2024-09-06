@@ -1,1 +1,1 @@
-export const BASE_URL='https://medassist.website'
+export const BASE_URL='http://localhost:3200'
