@@ -7,12 +7,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { cancelAppointment } from "../../services/patient/apiMethods";
 import {
   drAppointments,
-  fetchDoctor,
   patientHistory,
 } from "../../services/doctor/apiMethods";
 import PrescriptionModal from "./PrescriptionModel";
 import { Link } from "react-router-dom";
-import { updateDoctor } from "../../utils/reducers/doctorReducer";
+
 import HistoryModal from "./HistoryModal";
 import {
   Table,
@@ -24,14 +23,10 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import { updateDoctor } from "../../utils/reducers/doctorReducer";
+import WalletHistory from "./WalletHistory";
 
-const DEFAULT_SHIFTS = {
-  "9am-10am": 9,
-  "11am-12pm": 11,
-  "2pm-3pm": 14,
-  "5pm-6pm": 17,
-  "8pm-9pm": 20,
-};
+
 
 const blueColor = "#2172d2";
 const cyanColor = "#32c6d2";
@@ -51,14 +46,7 @@ function DocBookings() {
     fetchAppointments(selectedDate);
   }, [selectedDate]);
 
-  const fetchdoctor = async () => {
-    try {
-      const response = await fetchDoctor({ doctorId: doctorData._id });
-      dispatch(updateDoctor({ doctorData: response.data.doctor }));
-    } catch (error) {
-      toast.error("Somthing Went Wrong");
-    }
-  };
+
 
   const fetchAppointments = async (date) => {
     const doctorId = doctorData._id;
@@ -85,7 +73,7 @@ function DocBookings() {
     setIsModalOpen(false);
   };
 
-  const handleCancel = async (id) => {
+  const handleCancel = async (id,Fee) => {
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Cancel this appointment.",
@@ -99,9 +87,19 @@ function DocBookings() {
     if (result.isConfirmed) {
       const response = await cancelAppointment(id);
       if (response.status === 200) {
+        if (appointments && appointments.length > 0) {
+          setAppointments((prevList) =>
+            prevList.map((appointment) =>
+              appointment._id === id ? { ...appointment, status: "Cancelled" } : appointment
+            )
+          );
+          let wallet=doctorData.Wallet-Fee
+          let walletHistory=doctorData?.WalletHistory||[]
+          walletHistory.push({date:new Date(),amount:-Fee,message:'Amount deducted for Cancelling the Booking'})
+          dispatch(updateDoctor({ doctorData: {...doctorData,Wallet:wallet,WalletHistory:walletHistory} }));
+          
         toast.success("Appointment canceled successfully");
-        fetchdoctor();
-        fetchAppointments(selectedDate);
+        }
       } else {
         toast.error("Failed to cancel appointment");
       }
@@ -125,18 +123,6 @@ function DocBookings() {
     }
   };
 
-  const canCancel = (date, shift) => {
-    const currentTime = new Date();
-    const appointmentDate = new Date(date);
-    const shiftHour = DEFAULT_SHIFTS[shift];
-    if (shiftHour === undefined) return false;
-    const shiftTime = new Date(appointmentDate);
-    shiftTime.setHours(shiftHour, 0, 0, 0);
-    if (appointmentDate.toDateString() === currentTime.toDateString()) {
-      return shiftTime - currentTime > 60 * 60 * 1000;
-    }
-    return true;
-  };
 
   return (
     <div className="p-4">
@@ -236,10 +222,7 @@ function DocBookings() {
                         <Button
                           variant="contained"
                           color="secondary"
-                          onClick={() => handleCancel(appointment._id)}
-                          disabled={
-                            !canCancel(appointment.date, appointment.shift)
-                          }
+                          onClick={() => handleCancel(appointment._id,appointment.Fee)}
                         >
                           Cancel
                         </Button>

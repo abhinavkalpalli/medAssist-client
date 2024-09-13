@@ -104,13 +104,13 @@ function DoctorProfile() {
       gender,
       workingHospitalContact,
       expertise: selectedExpertise,
-      education,
+      education
     };
     try {
       const response = await editDoctor(formData);
       if (response.status === 200) {
         toast.success("Profile updated successfully");
-        dispatch(updateDoctor({ doctorData: response.data }));
+        dispatch(updateDoctor({ doctorData:{...formData} }));
         setIsChanged(false);
       } else {
         toast.error("Failed to update profile");
@@ -150,7 +150,7 @@ function DoctorProfile() {
         const response = await editDoctor(formData);
         if (response?.status === 200) {
           toast.success("Profile updated successfully");
-          dispatch(updateDoctor({ doctorData: response.data }));
+          dispatch(updateDoctor({ doctorData: {...formData} }));
           setIsChanged(false);
           toast.success("Profile Picture removed successfully.");
           Swal.fire({

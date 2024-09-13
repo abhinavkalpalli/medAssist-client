@@ -88,8 +88,8 @@ function PatientProfile() {
     try {
       const response = await editPatient(formData);
       if (response?.status === 200) {
+        dispatch(updateReduxUser({ userData: { ...formData } }));
         toast.success("Profile updated successfully");
-        dispatch(updateReduxUser({userData:response.data}));
         setIsChanged(false);
       } else {
         toast.error("Failed to update profile");
@@ -117,7 +117,7 @@ function PatientProfile() {
       };
       const response = await editPatient(formData);
       if (response.status === 200) {
-        dispatch(updateReduxUser({userData:response.data}));
+        dispatch(updateReduxUser({userData:formData}));
         setSelectedImage(null);
         setImageFile(null);
         toast.success("Profile Picture removed successfully.");

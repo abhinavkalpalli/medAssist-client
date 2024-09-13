@@ -6,13 +6,14 @@ import ProfileHolder2 from "../../assets/check2.jpg";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { BASE_URL } from "../../const/url";
-import { postBooking, fetchPatient } from "../../services/patient/apiMethods";
-import { updateReduxUser } from "../../utils/reducers/userReducer";
+import { postBooking } from "../../services/patient/apiMethods";
+import { drAppointments } from "../../services/doctor/apiMethods";
 import logo from "../../assets/Med Assist.png";
+import toast from "react-hot-toast";
+import { updateReduxUser } from "../../utils/reducers/userReducer";
 
 function PaymentProcess() {
   const User = useSelector((state) => state.user.userData);
-  const patientId = User._id;
   const location = useLocation();
   const { selectedDoctor, selectedDate, selectedShift } = location.state;
   const [showModal, setShowModal] = useState(false);
@@ -28,10 +29,7 @@ function PaymentProcess() {
       document.body.removeChild(script);
     };
   }, []);
-  const FetchPatient = async () => {
-    const userResponse = await fetchPatient({ patientId });
-    dispatch(updateReduxUser({ userData: userResponse.data.patient }));
-  };
+
   const handleBooking = async () => {
     const inputDate = new Date(selectedDate);
     const isoDateString = inputDate.toISOString().split("T")[0];
@@ -44,6 +42,32 @@ function PaymentProcess() {
     };
     const response = await postBooking(data);
     if (response.status === 200) {
+      let wallet = User?.Wallet || 0; 
+      let wallethistory = User.WalletHistory || [];
+    
+      if (wallet > 0) {
+        if (wallet >= selectedDoctor.Fee) {
+          wallet -= selectedDoctor.Fee;
+          wallethistory.push({
+            date: new Date().toISOString(),
+            amount: -selectedDoctor.Fee,
+            message: `Fee deducted for Booking`,
+          });
+        } else {
+          wallethistory.push({
+            date: new Date().toISOString,
+            amount: -wallet,
+            message: `Partial fee deducted for Booking`,
+          });
+          wallet = 0; // Reset the wallet to 0 since full amount couldn't be deducted
+        }
+      }
+    
+      // Update the redux state with the new wallet and wallet history
+      dispatch(updateReduxUser({ 
+        userData: { ...User, Wallet: wallet, WalletHistory: wallethistory }
+      }));
+      
       Swal.fire({
         icon: "success",
         title: "Booking Successful",
@@ -51,7 +75,6 @@ function PaymentProcess() {
         showConfirmButton: false,
         timer: 1500,
       });
-      FetchPatient();
       Navigate("/patient/profile");
     }
   };
@@ -71,8 +94,40 @@ function PaymentProcess() {
   };
 
   const handleProceed = async () => {
-    let fee = 0;
+    try {
+      const date = selectedDate.toISOString().split("T")[0];
+      const doctorId = selectedDoctor._id;
+      // Fetch the appointments for the selected date and doctor
+      const response = await drAppointments(date, doctorId);
 
+      if (response.status === 200) {
+        let appointments = [];
+        appointments = response.data.appointments;
+        // Check if the selected shift is already booked
+        const isShiftBooked = appointments.some(
+          (appointment) =>
+            appointment.shift === selectedShift &&
+            appointment.status === "Active"
+        );
+
+        if (isShiftBooked) {
+          // If the shift is booked, show SweetAlert and stop further execution
+          Swal.fire({
+            icon: "error",
+            title: "Slot Already Booked",
+            text: `The ${selectedShift} slot has already been booked. Please choose a different slot.`,
+            confirmButtonText: "OK",
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      toast.error(error);
+      return; // Stop execution in case of error
+    }
+
+    // Calculate the fee based on the user's wallet balance
+    let fee = 0;
     if (User?.Wallet > 0) {
       if (User.Wallet >= selectedDoctor.Fee) {
         fee = 0;
@@ -82,10 +137,14 @@ function PaymentProcess() {
     } else {
       fee = selectedDoctor.Fee;
     }
+
+    // If fee is zero, proceed with booking
     if (fee === 0) {
       handleBooking();
       return;
     }
+
+    // Prepare data for payment
     const data = {
       doctorId: selectedDoctor._id,
       userId: User._id,
@@ -93,6 +152,8 @@ function PaymentProcess() {
       shift: selectedShift,
       Fee: fee,
     };
+
+    // Handle online payment option
     if (selectedPaymentOption === "online") {
       try {
         const response = await axios.post(
@@ -100,36 +161,32 @@ function PaymentProcess() {
           data
         );
         const { order } = response.data;
+
+        // Payment options configuration
         const options = {
-          key: "",
+          key: "", // Razorpay key
           amount: order.amount,
           currency: "INR",
           name: "MedAssist",
           description: "Test Transaction",
-          image: logo,
+          image: logo, // Logo for the payment modal
           order_id: order.id,
           handler: async (response) => {
             try {
               const result = await axios.post(
                 `${BASE_URL}/api/patient/verify-payment`,
-                {
-                  response,
-                  order,
-                }
+                { response, order }
               );
 
+              // Payment verification success
               if (result.data.paid) {
                 Swal.fire({
                   icon: "success",
                   title: "Payment Verified!",
-                  text: "Your payment has been successfully verified. Booked the slot.",
-                })
-                  .then(() => {
-                    handleBooking();
-                  })
-                  .catch((err) => {
-                    throw err;
-                  });
+                  text: "Your payment has been successfully verified. Booking the slot.",
+                }).then(() => {
+                  handleBooking();
+                });
               } else {
                 Swal.fire({
                   icon: "error",
@@ -159,6 +216,7 @@ function PaymentProcess() {
           },
         };
 
+        // Open Razorpay payment modal
         const rzp1 = new window.Razorpay(options);
         rzp1.open();
       } catch (error) {
@@ -170,7 +228,8 @@ function PaymentProcess() {
         });
       }
     } else {
-      console.log("redirecting to wallet");
+      // Handle wallet payment option
+      console.log("Redirecting to wallet");
     }
   };
 

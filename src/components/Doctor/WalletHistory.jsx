@@ -115,7 +115,7 @@ function WalletHistory() {
                     isNegative={String(entry.amount).includes("-")}
                   >
                     <StyledTableCell component="th" scope="row">
-                      {entry.date}
+                      {new Date(entry.date).toLocaleDateString()}
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       {entry.amount}

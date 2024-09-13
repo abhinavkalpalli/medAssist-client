@@ -65,7 +65,11 @@ function UsersList() {
       try {
         const response = await blockUnblockPatient(id, status);
         if (response.status === 200) {
-          fetchData();
+          setUsers((prevList) =>
+            prevList.map((user) =>
+              user._id === id ? { ...user, is_Blocked: !status } : user
+            )
+          );
           toast.success(response.data.message);
         } else {
           toast.error("Failed to update user status");

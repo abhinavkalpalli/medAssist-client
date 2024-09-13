@@ -44,7 +44,9 @@ function CategoriesList() {
       const response = await editExpertise({ id, name });
 
       if (response.status === 200) {
-        fetchData();
+        setCategories(categories.map((category) =>
+          category._id === id ? { ...category, name: name } : category
+        ));
         setEditingCategory(null);
       } else {
         toast.error("Something Went Wrong");
@@ -57,7 +59,7 @@ function CategoriesList() {
   const addCategory = async () => {
     const response = await addExpertise({ name: newCategory.toUpperCase() });
     if (response.status === 200) {
-      fetchData();
+      setCategories([...categories, { _id: response.data._id, name: newCategory.toUpperCase() }]);
       setNewCategory("");
     } else {
       toast.error("Something Went Wrong");

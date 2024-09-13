@@ -92,9 +92,13 @@ function DoctorsList() {
 
     if (result.isConfirmed) {
       try {
-        const response = await blockUnblockDoctor(id, status);
+        const response = await blockUnblockDoctor(id,status);
         if (response.status === 200) {
-          fetchData();
+          setList((prevList) =>
+            prevList.map((doctor) =>
+              doctor._id === id ? { ...doctor, is_Blocked: !status } : doctor
+            )
+          );
           toast.success(response.data.message);
         } else {
           toast.error("Failed to update doctor status");
@@ -110,7 +114,11 @@ function DoctorsList() {
   const handleVerifyDocuments = async () => {
     const response = await verifyDoctorDocuments(selectedDoctorId);
     if (response.status === 200) {
-      fetchData();
+      setList((prevList) =>
+        prevList.map((doctor) =>
+          doctor._id === selectedDoctorId ? { ...doctor, documents_verified:true } : doctor
+        )
+      );
       toast.success(response.data.message);
       setIsModalOpen(false);
     } else {

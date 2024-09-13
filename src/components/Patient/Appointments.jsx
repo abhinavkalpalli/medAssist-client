@@ -19,7 +19,6 @@ import {
 } from "react-icons/md";
 import {
   cancelAppointment,
-  fetchPatient,
   yourBooking,
 } from "../../services/patient/apiMethods";
 import swal from "sweetalert";
@@ -31,6 +30,7 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import StarRatingModal from "./StarRatingModal";
 import Nodata from "../ui/Nodata";
 import toast from "react-hot-toast";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -100,12 +100,8 @@ const Appointments = () => {
     }
   };
 
-  const FetchPatient = async () => {
-    const userResponse = await fetchPatient({ patientId });
-    dispatch(updateReduxUser({ userData: userResponse.data.patient }));
-  };
 
-  const handleAppointmentCancellation = async (id) => {
+  const handleAppointmentCancellation = async (id,Fee) => {
     try {
       const confirmed = await swal({
         title: "Are you sure?",
@@ -118,8 +114,21 @@ const Appointments = () => {
       if (confirmed) {
         const response = await cancelAppointment(id);
         if (response.status === 200) {
-          fetchAppointments();
-          FetchPatient();
+          if (appointments && appointments.length > 0) {
+            setAppointments((prevList) =>
+              prevList.map((appointment) =>
+                appointment._id === id ? { ...appointment, status: "Cancelled" } : appointment
+              )
+            );
+          }
+          let wallet=User.Wallet+Fee
+          let wallethistory=User.WalletHistory||[]
+          wallethistory.push({
+            date: new Date(),
+            amount: Fee,
+            message: `Refund for Cancelling the Booking`
+          })
+          dispatch(updateReduxUser({ userData: {...User,Wallet:wallet,WalletHistory:wallethistory} }));
           swal("Cancelled!", "The appointment has been cancelled.", "success");
         } else {
           swal(
@@ -391,7 +400,7 @@ const Appointments = () => {
                                 <Button
                                   onClick={() =>
                                     handleAppointmentCancellation(
-                                      appointment._id
+                                      appointment._id,appointment.Fee
                                     )
                                   }
                                   variant="contained"
