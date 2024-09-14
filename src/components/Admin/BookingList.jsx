@@ -78,51 +78,48 @@ function BookingList() {
   const getStatusColor = (status) => {
     switch (status) {
       case "Active":
-        return "text-blue-500";
+        return "blue";
       case "Completed":
-        return "text-green-500";
+        return "green";
       case "Cancelled":
-        return "text-red-500";
+        return "red";
       default:
-        return "";
+        return "black";
     }
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
         <CircularProgress />
       </div>
     );
   }
 
   return (
-    <div className="m-4">
-      <h1
-        className="text-3xl font-bold mb-4"
-        style={{ color: blueColor, textAlign: "center" }}
-      >
+    <div style={{ margin: "16px" }}>
+      <h1 style={{ color: blueColor, textAlign: "center", fontSize: "24px", fontWeight: "bold", marginBottom: "16px" }}>
         BOOKINGS
       </h1>
-      <div className="flex items-center justify-between mb-4">
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <DatePicker
           selected={filterDate}
           onChange={handleDateChange}
           dateFormat="yyyy-MM-dd"
           placeholderText="Select a date"
-          className="mt-1 block rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="mt-1 block rounded-md border-gray-300 shadow-sm"
         />
       </div>
       <TableContainer component={Paper}>
         <Table aria-label="bookings table">
           <TableHead>
-            <TableRow style={{ backgroundColor: blueColor, color: "#fff" }}>
-              <TableCell>Doctor Name</TableCell>
-              <TableCell>Patient Name</TableCell>
-              <TableCell>Patient Email</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Shift</TableCell>
-              <TableCell>Date</TableCell>
+            <TableRow style={{ backgroundColor: blueColor }}>
+              <TableCell style={{ color: "#fff" }}>Doctor Name</TableCell>
+              <TableCell style={{ color: "#fff" }}>Patient Name</TableCell>
+              <TableCell style={{ color: "#fff" }}>Patient Email</TableCell>
+              <TableCell style={{ color: "#fff" }}>Status</TableCell>
+              <TableCell style={{ color: "#fff" }}>Shift</TableCell>
+              <TableCell style={{ color: "#fff" }}>Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -137,13 +134,11 @@ function BookingList() {
                   <TableCell>{booking.doctorId.name}</TableCell>
                   <TableCell>{booking.patientId.name}</TableCell>
                   <TableCell>{booking.patientId.email}</TableCell>
-                  <TableCell className={getStatusColor(booking.status)}>
+                  <TableCell style={{ color: getStatusColor(booking.status) }}>
                     {booking.status}
                   </TableCell>
                   <TableCell>{booking.shift}</TableCell>
-                  <TableCell>
-                    {new Date(booking.date).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{new Date(booking.date).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))
             ) : (
@@ -156,14 +151,12 @@ function BookingList() {
           </TableBody>
         </Table>
       </TableContainer>
-      <div className="flex justify-center mt-4">
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
         <Button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           variant="contained"
-          color="primary"
           disabled={currentPage === 1}
-          style={{ backgroundColor: blueColor, color: "#fff" }}
-          className="mx-1"
+          style={{ backgroundColor: blueColor, color: "#fff", margin: "0 4px" }}
         >
           <MdOutlineKeyboardDoubleArrowLeft />
         </Button>
@@ -172,26 +165,20 @@ function BookingList() {
             key={index + 1}
             onClick={() => setCurrentPage(index + 1)}
             variant="contained"
-            color={currentPage === index + 1 ? "primary" : "default"}
             style={{
-              backgroundColor:
-                currentPage === index + 1 ? blueColor : "#e0e0e0",
+              backgroundColor: currentPage === index + 1 ? blueColor : "#e0e0e0",
               color: currentPage === index + 1 ? "#fff" : "#000",
+              margin: "0 4px",
             }}
-            className="mx-1"
           >
             {index + 1}
           </Button>
         ))}
         <Button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           variant="contained"
-          color="primary"
           disabled={currentPage === totalPages}
-          style={{ backgroundColor: blueColor, color: "#fff" }}
-          className="mx-1"
+          style={{ backgroundColor: blueColor, color: "#fff", margin: "0 4px" }}
         >
           <MdOutlineKeyboardDoubleArrowRight />
         </Button>
@@ -208,32 +195,17 @@ function BookingList() {
           </Typography>
           {selectedBooking && (
             <div>
-              <p>
-                <strong>Doctor:</strong> {selectedBooking.doctorId.name}
-              </p>
-              <p>
-                <strong>Patient:</strong> {selectedBooking.patientId.name}
-              </p>
-              <p>
-                <strong>Patient Email:</strong>{" "}
-                {selectedBooking.patientId.email}
-              </p>
-              <p>
-                <strong>Status:</strong> {selectedBooking.status}
-              </p>
-              <p>
-                <strong>Shift:</strong> {selectedBooking.shift}
-              </p>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(selectedBooking.date).toLocaleDateString()}
-              </p>
+              <p><strong>Doctor:</strong> {selectedBooking.doctorId.name}</p>
+              <p><strong>Patient:</strong> {selectedBooking.patientId.name}</p>
+              <p><strong>Patient Email:</strong> {selectedBooking.patientId.email}</p>
+              <p><strong>Status:</strong> {selectedBooking.status}</p>
+              <p><strong>Shift:</strong> {selectedBooking.shift}</p>
+              <p><strong>Date:</strong> {new Date(selectedBooking.date).toLocaleDateString()}</p>
             </div>
           )}
           <Button
             onClick={closeModal}
             variant="contained"
-            color="primary"
             style={{ backgroundColor: blueColor, color: "#fff" }}
           >
             Close

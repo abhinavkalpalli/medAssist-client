@@ -19,7 +19,7 @@ import {
 } from "react-icons/md";
 import {
   cancelAppointment,
-  yourBooking,
+  userBooking,
 } from "../../services/patient/apiMethods";
 import swal from "sweetalert";
 import jsPDF from "jspdf";
@@ -90,7 +90,7 @@ const Appointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await yourBooking(patientId);
+      const response = await userBooking(patientId);
       setAppointments(response.data.data);
     } catch (error) {
       setError(error.message);

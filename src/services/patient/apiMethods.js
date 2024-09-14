@@ -132,7 +132,7 @@ export const postBooking=(userData)=>{
         }
     })
 }
-export const yourBooking=(patientId)=>{
+export const userBooking=(patientId)=>{
     return new Promise((resolve,reject)=>{
         try{
             apiCall("get",userUrl.yourBooking(patientId)).then((response)=>{

@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { FiUpload, FiTrash } from "react-icons/fi";
 import { useSelector, useDispatch } from "react-redux";
 import { uploadImageToCloudinary } from "../../../hooks/cloudinary";
-import { editPatient,yourBooking } from "../../../services/patient/apiMethods";
+import { editPatient,userBooking } from "../../../services/patient/apiMethods";
 import profilePlaceholder from '../../../assets/user.png';
 import {  updateReduxUser } from "../../../utils/reducers/userReducer";
 import Swal from "sweetalert2";
@@ -31,7 +31,7 @@ function PatientProfile() {
     fetchAppointments()
   },[date])
   const fetchAppointments=async()=>{
-    const response=await yourBooking(user._id)
+    const response=await userBooking(user._id)
     const selectedDateISO = date.toISOString().split("T")[0]; 
     if(response.status===200){
      const todayappointment= response.data.data.filter((item) => {
